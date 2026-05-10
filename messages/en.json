@@ -1,0 +1,54 @@
+{
+  "home": {
+    "title": "Welcome",
+    "description": "This is an English page"
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About"
+  },
+  "hero": {
+    "title": "Sina Rahmani",
+    "role": "Frontend Developer | Passionate about UX",
+    "description": "I code with ❤️ and build sites that not only work but also feel great.",
+    "viewProjects": "View Projects",
+    "resume": "Resume"
+  },
+  "nav": {
+    "about" : "About",
+    "experience" : "Experience",
+    "projects" : "Projects"
+  },
+  "About": {
+    "paragraphs": [
+      "I’m a frontend engineer...",
+      "Currently, I'm on the component library team at <company>Klaviyo</company>...",
+      "Previously <company2>Sina</company2>, I’ve worked across..."
+    ],
+    "links": {
+      "company": "https://www.klaviyo.com",
+      "company2": "https://sinarahmani.ir"
+    }
+  },
+  "Header":{
+    "SocialData":{
+      "tel":{"icon": "faMobileAlt", "link": "tel:+989111517705", "text": "Phone"},
+      "email":{"icon": "faGoogle", "link": "mailto:sina.rahmanii@gmail.com", "text": "Email"},
+      "whatsapp":{"icon": "faWhatsapp", "link": "https://wa.me/989111517705", "text": "Whatsapp"},
+      "instagram":{"icon": "faInstagram", "link": "https://instagram.com/sina.rahmani", "text": "Instagram"},
+      "telegram":{"icon": "faTelegram", "link": "https://t.me/sina.rahmaniii", "text": "Telegram"}
+    },
+    "Text":{
+      "h1": "Sina Rahmani",
+      "h5": "Frond end Designer | Developer | Musician"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "resume": "Resume",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "contact": "Contact"
+  }
+}

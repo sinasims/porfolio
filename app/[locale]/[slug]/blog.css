@@ -1,0 +1,86 @@
+/* سایزبندی استاندارد h1 تا h6 با واحد rem */
+.blog h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  padding-bottom: 2rem;
+}
+.blog h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  padding-bottom: 1.5rem;
+}
+.blog h3 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  padding-bottom: 1.25rem;
+}
+.blog h4 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 1rem;
+}
+.blog h5 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding-bottom: .75rem;
+}
+.blog h6 {
+  font-size: 1rem;
+  font-weight: bold;
+  padding-bottom: .75rem;
+}
+.blog *{
+    margin-bottom: 1.5rem;
+    line-height: 2.5rem;
+}
+.blog p{
+    text-align: justify;
+}
+.blog p img{
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    text-align: center;
+}
+.blog pre{
+    width: 100%;
+    display: block;
+    direction: ltr !important;
+    padding: 2rem;
+}
+.blog pre{
+    background-color: var(--color-gray-200);
+}
+.dark .blog pre{
+    background-color: var(--color-gray-800);
+}
+/* در صورت نیاز به سلسله مراتب کوچک‌تر برای موبایل می‌توانید از max-width استفاده کنید */
+@media (max-width: 768px) {
+  .blog h1 { font-size: 2rem; }
+  .blog h2 { font-size: 1.75rem; }
+  .blog h3 { font-size: 1.5rem; }
+  .blog h4 { font-size: 1.25rem; }
+  .blog h5 { font-size: 1.125rem; }
+  .blog h6 { font-size: 1rem; }
+}
+
+.blog {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+.blog .prose,
+.blog [class*="prose"] {
+  word-break: break-word;        /* شکستن کلمات بلند در صورت نیاز */
+  overflow-wrap: break-word;     /* کلمات را در مرز کانتینر می‌شکند */
+  white-space: normal;           /* اطمینان از رفتار نرمال */
+}
+
+/* همچنین می‌توانید مستقیماً روی پاراگراف‌ها اعمال کنید */
+.blog p {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.blog p code{
+  display: block;
+}

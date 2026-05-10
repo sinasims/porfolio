@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@import "../../../public/styles/fonts.css";
+
+.resume-print-wrapper {
+  background: white;
+  color: black;
+  min-height: 100vh;
+}
+
+@media print {
+  .resume-print-wrapper {
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: black;
+  }
+  body {
+    margin: 0 auto;
+    width: 100%;
+    padding: 0;
+  }
+}

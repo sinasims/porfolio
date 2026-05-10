@@ -1,0 +1,99 @@
+@import "tailwindcss";
+@source "../components";
+@source "../app";
+@source "../pages";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@import "../public/styles/fonts.css";
+
+@theme {
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+  --color-accent: #06b6d4;
+  --color-slate-100: #e2e8ff; /* سورمه‌ای مایل به سفید */
+  --color-slate-200: #cbd5ff;
+  --color-slate-300: #a5b4fc;
+  --color-slate-400: #818cf8;
+  --color-slate-500: #6366f1;
+  --color-slate-600: #4f46e5;
+  --color-slate-700: #4338ca;
+  --color-slate-800: #3730a3;
+  --color-slate-900: #1e1b4b;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  body {
+    @apply bg-black dark:bg-slate-900 dark:text-slate-100;
+  }
+  .nav-bg {
+    @apply bg-white dark:bg-gray-900 dark:text-slate-100;
+  }
+  ::selection {
+    background-color: var(--color-primary);
+    color: rgb(255, 255, 255);
+  }
+}
+* {
+  color: var(--color-gray-800);
+}
+.dark * {
+  color: var(--color-slate-100);
+}
+header h1,
+header h5,
+header .mobile-menu svg path {
+  color: var(--color-slate-100);
+}
+.contact-btn path, .contact-btn span {
+  color: var(--color-slate-100);
+}
+.hero {
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/images/hero5.png");
+  background-size: 120vw auto;
+  background-repeat: no-repeat;
+}
+@media (max-width: 1600px) {
+  .hero {
+    background-size: 115%; /* ارتفاع = 100% ارتفاع المنت، عرض اتوماتیک */
+    /* background-position: center center !important; */
+  }
+}
+@media (max-width: 1400px) {
+  .hero {
+    background-size: 135%; /* ارتفاع = 100% ارتفاع المنت، عرض اتوماتیک */
+    /* background-position: center center !important; */
+  }
+}
+@media (max-width: 1200px) {
+  .hero {
+    background-size: 145%; /* ارتفاع = 100% ارتفاع المنت، عرض اتوماتیک */
+    /* background-position: center center !important; */
+  }
+}
+@media (max-width: 1080px) {
+  .hero {
+    background-size: auto 100%; /* ارتفاع = 100% ارتفاع المنت، عرض اتوماتیک */
+    /* background-position: center center !important; */
+  }
+}
+@media (max-width: 767px) {
+  .hero {
+    background-size: auto 100%; /* ارتفاع = 100% ارتفاع المنت، عرض اتوماتیک */
+    background-position: center center !important;
+  }
+}
+
+.social-icons svg path {
+  fill: var(--color-gray-900);
+}
+.dark .social-icons svg path {
+  fill: var(--color-slate-100);
+} 

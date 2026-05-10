@@ -1,0 +1,54 @@
+{
+  "home": {
+    "title": "خوش آمدید",
+    "description": "این یک صفحه فارسی است"
+  },
+  "navbar": {
+    "home": "خانه",
+    "about": "درباره ما"
+  },
+  "hero": {
+    "title": "سینا رحمانی",
+    "role": "توسعه‌دهنده فرانت‌اند | علاقه‌مند به تجربه کاربری",
+    "description": "من با ❤️ کد می‌زنم و سایت‌هایی می‌سازم که نه فقط کار می‌کنن، بلکه حس خوبی هم دارن.",
+    "viewProjects": "دیدن پروژه‌ها",
+    "resume": "رزومه"
+  },
+  "nav": {
+    "about" : "درباره من",
+    "experience" : "تجربیات",
+    "projects" : "پروژه‌ها"
+  },
+  "About": {
+    "paragraphs": [
+      "من یک برنامه نویس هستم",
+      "Currently, I'm on the component library team at <company>Klaviyo</company>...",
+      "Previously <company2>Sina</company2>, I’ve worked across..."
+    ],
+    "links": {
+      "company": "https://www.klaviyo.com",
+      "company2": "https://sinarahmani.ir"
+    }
+  },
+    "Header":{
+    "SocialData":{
+      "tel":{"icon": "faMobileAlt", "link": "tel:+989111517705", "text": "موبایل"},
+      "email":{"icon": "faGoogle", "link": "mailto:sina.rahmanii@gmail.com", "text": "ایمیل"},
+      "whatsapp":{"icon": "faWhatsapp", "link": "https://wa.me/989111517705", "text": "واتس آپ"},
+      "instagram":{"icon": "faInstagram", "link": "https://instagram.com/sina.rahmani", "text": "اینستاگرام"},
+      "telegram":{"icon": "faTelegram", "link": "https://t.me/sina.rahmaniii", "text": "تلگرام"}
+    },
+    "Text":{
+      "h1": "سینا رحمانی",
+      "h5": "طراح سایت | توسعه دهنده نرم افزار | تنظیم کننده و نوارنده پیانو"
+    }
+  },
+  "navigation": {
+    "home": "خانه",
+    "about": "درباره من",
+    "resume": "رزومه",
+    "portfolio": "نمونه کارها",
+    "blog": "وبلاگ",
+    "contact": "تماس"
+  }
+}
