@@ -118,7 +118,6 @@ export default async function Page({params, }: { params: Promise<{ locale: "en" 
       is_active: row.is_active === 1,
     })) as Project[];
 
-    console.log(`✅ ${projects.length} پروژه از دیتابیس دریافت شد.`);
   } catch (error) {
     console.error('❌ خطا در دریافت پروژه‌ها:', error);
     projects = [];
@@ -150,7 +149,6 @@ export default async function Page({params, }: { params: Promise<{ locale: "en" 
       publish_date: row.publish_date,
       slug: row.slug,
     })) as BlogPost[];
-    console.log(`✅ ${blogPosts.length} بلاگ پست از دیتابیس دریافت شد.`);
   } catch (error) {
     console.error('❌ خطا در دریافت بلاگ پست‌ها:', error);
     blogPosts = [];

@@ -2,10 +2,28 @@
 
 import { getDb } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 
 // --------------------------------------------
 //  توابع ارسال پیام به سرویس‌های خارجی
 // --------------------------------------------
+async function checkRateLimit(ip: string, email: string): Promise<{ allowed: boolean; message?: string }> {
+    const db = await getDb();
+    const halfHourAgo = new Date(Date.now() - 30 * 60 * 1000);
+
+    // شمارش تعداد پیام‌های نیم‌ساعت اخیر با این آی‌پی یا این ایمیل
+    const [rows] = await db.query(
+        `SELECT COUNT(*) as count FROM contact_rate_limit 
+         WHERE (ip_address = ? OR email = ?) AND created_at > ?`,
+        [ip, email, halfHourAgo]
+    ) as any[];
+
+    const count = rows[0].count;
+    if (count >= 2) {
+        return { allowed: false, message: 'شما بیش از حد مجاز پیام ارسال کرده‌اید. لطفاً نیم ساعت دیگر تلاش کنید.' };
+    }
+    return { allowed: true };
+}
 
 async function sendToTelegram(message: string): Promise<boolean> {
     const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -65,7 +83,7 @@ export async function submitContact(formData: FormData): Promise<{ success: bool
     const subject = formData.get('subject')?.toString().trim() || null;
     const messageBody = formData.get('message')?.toString().trim();
 
-    // اعتبارسنجی ساده
+    // اعتبارسنجی معمول
     if (!name || !email || !messageBody) {
         return { success: false, message: 'لطفاً نام، ایمیل و پیام را وارد کنید.' };
     }
@@ -73,17 +91,34 @@ export async function submitContact(formData: FormData): Promise<{ success: bool
         return { success: false, message: 'ایمیل وارد شده معتبر نیست.' };
     }
 
+    // گرفتن آی‌پی کاربر
+    const headersList = await headers();
+    let ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
+    if (ip.includes(',')) ip = ip.split(',')[0].trim();
+
+    // بررسی محدودیت نیم ساعته
+    const rateLimit = await checkRateLimit(ip, email);
+    if (!rateLimit.allowed) {
+        return { success: false, message: rateLimit.message };
+    }
+
     try {
         const db = await getDb();
-        // ذخیره در دیتابیس
+        // ذخیره در جدول اصلی
         await db.query(
             `INSERT INTO contacts (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)`,
             [name, email, phone, subject, messageBody]
         );
 
-        // ساخت پیام متنی برای ارسال به سرویس‌ها
+        // ثبت در جدول rate limit برای محدودیت‌های بعدی
+        await db.query(
+            `INSERT INTO contact_rate_limit (ip_address, email) VALUES (?, ?)`,
+            [ip, email]
+        );
+
+        // ساخت پیام برای ارسال به تلگرام و بله (همان کد قبلی)
         const notificationText = `
-📝 پیام جدید از فرم تماس
+📝 <b>پیام جدید از فرم تماس</b>
 👤 نام: ${name}
 📧 ایمیل: ${email}
 📱 تلفن: ${phone || '—'}
@@ -92,19 +127,11 @@ export async function submitContact(formData: FormData): Promise<{ success: bool
 ${messageBody}
         `.trim();
 
-        // ارسال همزمان به تلگرام و بله (در پس‌زمینه و بدون blocking کامل)
-        // از Promise.allSettled استفاده می‌کنیم تا خطای یکی دیگری را متوقف نکند
-        const results = await Promise.allSettled([
+        // ارسال همزمان به تلگرام و بله (تابع‌های کمکی sendToTelegram, sendToBale تعریف شوند)
+        await Promise.allSettled([
             sendToTelegram(notificationText),
-            sendToBale(notificationText),
+            sendToBale(notificationText)
         ]);
-
-        const telegramOk = results[0].status === 'fulfilled' && results[0].value;
-        const baleOk = results[1].status === 'fulfilled' && results[1].value;
-
-        if (!telegramOk || !baleOk) {
-            console.warn('⚠️ یکی از پیام‌رسان‌ها خطا داشت.', { telegramOk, baleOk });
-        }
 
         return { success: true, message: 'پیام شما با موفقیت ارسال شد.' };
     } catch (error) {
@@ -112,3 +139,4 @@ ${messageBody}
         return { success: false, message: 'خطای داخلی سرور. لطفاً مجدد تلاش کنید.' };
     }
 }
+

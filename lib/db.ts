@@ -14,7 +14,6 @@ async function initDatabaseAndTables(): Promise<void> {
     const dbName = process.env.DB_NAME || 'task_manager_db';
     
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-    console.log(`Database "${dbName}" is ready.`);
     await connection.query(`USE \`${dbName}\`;`);
 
     await connection.query(`
@@ -31,7 +30,17 @@ async function initDatabaseAndTables(): Promise<void> {
             INDEX idx_is_read (is_read)
         );
     `);
-    console.log('Table "contacts" is ready.');
+
+    await connection.query(`
+        CREATE TABLE IF NOT EXISTS contact_rate_limit (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            ip_address VARCHAR(45) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_ip_time (ip_address, created_at),
+            INDEX idx_email_time (email, created_at)
+        );
+    `);
 
     await connection.query(`
         CREATE TABLE IF NOT EXISTS blog_posts (
@@ -56,7 +65,6 @@ async function initDatabaseAndTables(): Promise<void> {
             INDEX idx_is_published (is_published)
         );
     `);
-    console.log('Table "blog_posts" is ready.');
 
     await connection.query(`
         CREATE TABLE IF NOT EXISTS projects (
@@ -76,7 +84,6 @@ async function initDatabaseAndTables(): Promise<void> {
             INDEX idx_is_active (is_active)
         );
     `);
-    console.log('Table "projects" is ready.');
 
     await connection.end();
 }
