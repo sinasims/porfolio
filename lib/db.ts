@@ -18,6 +18,22 @@ async function initDatabaseAndTables(): Promise<void> {
     await connection.query(`USE \`${dbName}\`;`);
 
     await connection.query(`
+        CREATE TABLE IF NOT EXISTS contacts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            phone VARCHAR(50) NULL,
+            subject VARCHAR(255) NULL,
+            message TEXT NOT NULL,
+            is_read BOOLEAN DEFAULT FALSE,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_created_at (created_at),
+            INDEX idx_is_read (is_read)
+        );
+    `);
+    console.log('Table "contacts" is ready.');
+
+    await connection.query(`
         CREATE TABLE IF NOT EXISTS blog_posts (
             id INT AUTO_INCREMENT PRIMARY KEY,
             upload_token CHAR(36) NULL,
@@ -72,7 +88,7 @@ export async function getDb(): Promise<Pool> {
             host: process.env.DB_HOST || '127.0.0.1',
             user: process.env.DB_USER || 'root',
             password: process.env.DB_PASSWORD || '',
-            database: process.env.DB_NAME || 'task_manager_db',
+            database: process.env.DB_NAME || 'portfolio_db2',
             port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
             waitForConnections: true,
             connectionLimit: 10,

@@ -3,18 +3,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEnvelope, faComment, faPaperPlane, faShieldAlt, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faEnvelope, faComment, faPaperPlane, faShieldAlt, faExclamationTriangle, faCheckCircle, faPhone } from '@fortawesome/free-solid-svg-icons';
 import ScrollReveal from '@/components/ScrollRevealProps';
-import { getCsrfToken } from '../../lib/csrf';
+import { submitContact } from '@/app/actions/contact';
 
 type FormData = {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
 };
 
-// آبجکت ترجمه‌ها
 const translations = {
   fa: {
     badge: "ارتباط با من",
@@ -24,6 +24,8 @@ const translations = {
     namePlaceholder: "علی رضایی",
     emailLabel: "ایمیل",
     emailPlaceholder: "example@domain.com",
+    phoneLabel: "شماره تماس",
+    phonePlaceholder: "0912 123 4567",
     subjectLabel: "موضوع",
     subjectPlaceholder: "همکاری، مشاوره، سوال...",
     messageLabel: "پیام شما",
@@ -50,6 +52,8 @@ const translations = {
     namePlaceholder: "Ali Rezaei",
     emailLabel: "Email",
     emailPlaceholder: "example@domain.com",
+    phoneLabel: "Phone Number",
+    phonePlaceholder: "+98 912 123 4567",
     subjectLabel: "Subject",
     subjectPlaceholder: "Collaboration, consultation, question...",
     messageLabel: "Your Message",
@@ -78,7 +82,13 @@ const ContactForm = ({ locale = 'fa' }: ContactFormProps) => {
   const t = translations[locale];
   const isRTL = locale === 'fa';
 
-  const [formData, setFormData] = useState<FormData>({ name: '', email: '', subject: '', message: '' });
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+  });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
   
@@ -122,27 +132,28 @@ const ContactForm = ({ locale = 'fa' }: ContactFormProps) => {
     if (!validateForm()) return;
     setLoading(true);
     setStatus({ type: null, message: '' });
+    
     try {
-      const response = await fetch('/api/contact/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('subject', formData.subject);
+      formDataToSend.append('message', formData.message);
 
-      const data = await response.json();
+      const result = await submitContact(formDataToSend);
 
-      if (response.ok) {
+      if (result.success) {
         setStatus({ type: 'success', message: t.successMessage });
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
         generateCaptcha();
-      } 
-      else if (response.status === 429) {
-        setStatus({ type: 'error', message: t.rateLimitMessage });
-      } 
-      else {
-        setStatus({ type: 'error', message: t.errorMessage + JSON.stringify(data) });
+      } else {
+        let errorMsg = result.message || t.errorMessage;
+        if (errorMsg.includes('بیش از حد مجاز') || errorMsg.includes('too many')) {
+          setStatus({ type: 'error', message: t.rateLimitMessage });
+        } else {
+          setStatus({ type: 'error', message: errorMsg });
+        }
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -210,20 +221,37 @@ const ContactForm = ({ locale = 'fa' }: ContactFormProps) => {
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        <FontAwesomeIcon icon={faComment} className="text-indigo-500 text-xs" />
-                        <span>{t.subjectLabel}</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all duration-200"
-                        placeholder={t.subjectPlaceholder}
-                        disabled={loading}
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                          <FontAwesomeIcon icon={faPhone} className="text-indigo-500 text-xs" />
+                          <span>{t.phoneLabel}</span>
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all duration-200"
+                          placeholder={t.phonePlaceholder}
+                          disabled={loading}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                          <FontAwesomeIcon icon={faComment} className="text-indigo-500 text-xs" />
+                          <span>{t.subjectLabel}</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="subject"
+                          value={formData.subject}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all duration-200"
+                          placeholder={t.subjectPlaceholder}
+                          disabled={loading}
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-1">
@@ -294,7 +322,7 @@ const ContactForm = ({ locale = 'fa' }: ContactFormProps) => {
                           ) : (
                             <>
                               <span className="font-semibold tracking-wide">{t.sendButton}</span>
-                              <FontAwesomeIcon icon={faPaperPlane} className=" text-sm transition-transform group-hover:translate-x-1 rotate-180"/>
+                              <FontAwesomeIcon icon={faPaperPlane} className="text-sm transition-transform group-hover:translate-x-1 rotate-180"/>
                             </>
                           )}
                         </div>
